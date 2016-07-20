@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Pathfinder</title>
+        <link rel="stylesheet" href="main.css">
+        <script type="text/javascript" src="script.js"></script>
+    </head>
+    <body>
+        <label for="nDim">Enter board size </label>
+        <input type="number" min=2 id="nDim" 
+            onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+            onkeydown = "if (event.keyCode == 13) document.getElementById('bCreate').click()"/>
+        <button id="bCreate" class="butt" onClick="CreateTable()">CREATE</button>
+        <br>
+        <br>
+        <!--<form id="ControlBlock">-->
+            <!--<button id="bStart"    type="button" class="butt tg-start" onclick=drawStart() >START</button>-->
+            <!--<button id="bFinish"   type="button" class="butt tg-finish" onclick=drawFinish() >FINISH</button>-->
+            <!--<button id="bObstacle" type="button" class="butt tg-brick" onclick=drawBricks() >BRICK</button>-->
+        <div>    
+            <input type="radio" name="action" id="r1" checked="checked">Mark start/end</input>
+            <input type="radio" name="action" id="r2">Draw obstacles</input>
+        </div>    
+        <br>
+        <button id="bProceed" disabled="true" type="button" class="butt" onclick=Proceed()>FIND ROUTE</button>
+        <br>
+        <br>
+        <!--</form>-->
+        <div id="DrawArea"></div>
+
+    </body>
+</html>    
+
