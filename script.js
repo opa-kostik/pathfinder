@@ -126,31 +126,44 @@ function checkInput(event){
     return event.charCode >= 48 && event.charCode <= 57
 }
 
-function CreateTable(){
+//Initialize view variables
+function InitView(){
     
-    Refresh();
+    var table;
+    var eDrawArea;
     
-    var eDrawArea = document.getElementById("DrawArea");
-    var nDim = document.getElementById("nDim").value;
+    gaBarriers = [];
+    gsStart   = "";
+    gsFinish  = "";
     
-    //set global variable
-    gnDim = nDim;
+    document.getElementById("bProceed").disabled  = true;
+    document.getElementById("bProceed").innerHTML = "FIND ROUTE";
+    document.getElementById("r1").checked = true;
     
-    if (nDim < 1) {
+    gnDim = document.getElementById("nDim").value;
+    
+    if (gnDim < 1) {
         //ask for natural number
         alert('Please make sure you enter integer positive number!');
         return;   
     }    
         
-    var table;
-    table = document.getElementById('Table');
     
+    eDrawArea = document.getElementById("DrawArea");
+    table = document.getElementById('Table');
     if (table) eDrawArea.removeChild(table);
     
-    table = document.createElement('table');
-    table.setAttribute('id', 'Table' )
+}
+
+function DrawTable(){
+    
     var tr = [];
     var td = [];
+    var nDim = gnDim;
+    var eDrawArea = document.getElementById("DrawArea");
+    var table = document.createElement('table');
+    
+    table.setAttribute('id', 'Table' )
     
     for (var i = 0; i < nDim; i++){
         tr[i] = document.createElement('tr');   
@@ -169,6 +182,13 @@ function CreateTable(){
     }
     
     eDrawArea.appendChild(table);
+}
+
+function CreateTable(){
+    
+    InitView();    
+    DrawTable();
+    
 }
 
 function ToggleCell(elemId) {
@@ -368,36 +388,55 @@ function StartGame(){
         }
         document.getElementById("bProceed").innerHTML = "REFRESH";
     }catch(err){
-        Refresh();
+        SoftRefresh();
         alert(err.message);
     }
 }    
 
-function Refresh(){
-    gaBarriers = [];
-    gsStart   = "";
-    gsFinish  = "";
-    var elem = "";
+function ResetTableView(){
+    
+    var elem;
     
     for(i = 1; i <= gnDim; i++){
-        for(j = 1; j <= gnDim; j++){
+        for(var j = 1; j <= gnDim; j++){
             elem = document.getElementById('X' + i + 'Y' + j);
             elem.style.backgroundColor = gColorDefault;
             elem.innerHTML = "";
         }
     }
-    document.getElementById("bProceed").innerHTML = "START";
-    document.getElementById("bProceed").disabled = true;
     
-    document.getElementById("r1").checked = true;
+    
+}
+
+function SoftRefresh(){
+    
+    var elem;
+    
+    ResetTableView();
+    
+    //restore obstacles
+    for(i = 0; i < gaBarriers.length; i++){
+        elem = document.getElementById(gaBarriers[i]);
+        elem.style.backgroundColor = gColorObstacle;
+    }
+    
+    //restore Endpoints
+    elem = document.getElementById(gsStart);    
+    elem.style.backgroundColor = gColorEnding;
+    
+    elem = document.getElementById(gsFinish);    
+    elem.style.backgroundColor = gColorEnding;
+    
+    document.getElementById("bProceed").innerHTML = "FIND ROUTE";
+    
 }
 
 function Proceed(){
     switch(document.getElementById("bProceed").innerHTML){
         case "REFRESH":
-            Refresh();
+            SoftRefresh();
             break;
-        case "START":
+        case "FIND ROUTE":
             StartGame();
             break
     }    
