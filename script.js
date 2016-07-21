@@ -172,7 +172,6 @@ function DrawTable(){
         for (var j = 0; j < nDim; j++){
             td[j] = document.createElement('td');   
             td[j].setAttribute('id','X'+ ( i + 1 ) + 'Y' + ( j + 1 ) );
-            // td[j].addEventListener('click', ToggleCell(i,j) );
             td[j].addEventListener('click', function(e){
                 var elemId = e.srcElement.id;
                 ToggleCell(elemId);
@@ -346,18 +345,6 @@ function StartGame(){
                 if (Game.IsFinishReached) break
             }
             
-// //++LOGS - TO COMMENT            
-//             //PRINT OUT CANDIDATES
-//             console.log("-----------------------------------------------------------");
-//             console.log("Candidates: ");
-//             for(i=0;i<Game.aCandidates.length; i++){
-//                 console.log("(" + Game.aCandidates[i].nXPos + " : " 
-//                 + Game.aCandidates[i].nYPos + ") " 
-//                 + Game.aCandidates[i].nCurrentWeight + " " 
-//                 + Game.aCandidates[i].nRemainingWeight);
-//             }
-// //--LOGS - TO COMMENT
-
             //there are no candidates left => end of game, no route
             if (!Game.aCandidates.length) break;
             
@@ -370,15 +357,6 @@ function StartGame(){
             if (oCandidate.nCurrentWeight != 0)
                 eCell.style.backgroundColor = gColorProcessed;
                 
-// //++LOGS - TO COMMENT
-//             eCell.innerHTML = eCell.innerHTML + 
-//                 "(N" + (++nCounter) + 
-//                 "C" + oCandidate.nCurrentWeight + 
-//                 "R" + oCandidate.nRemainingWeight + ")"; 
-//             console.log("Current cell: ");
-//             console.log("(" + oCandidate.nXPos + " : " + oCandidate.nYPos + ")");
-// //--LOGS - TO COMMENT
-   
         }//while(true)
         
         if (Game.IsFinishReached){
