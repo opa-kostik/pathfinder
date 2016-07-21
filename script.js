@@ -1,13 +1,16 @@
 
-var gaBarriers = [];
-var gsStart   = "";
-var gsFinish  = "";
-var gnDim     = 0;    
-var gColorProcessed = '#777777';
-var gColorEnding = '#E67518';
-var gColorDefault = '#CCC';
-var gColorObstacle = '#1C2833';
-var gColorRoute     = '#52BE80';
+var gaBarriers = [];    //view - obstacles
+var gsStart   = "";     //view - start point
+var gsFinish  = "";     //view - end point
+var gnDim     = 0;      //view - table size
+var gnMinDim  = 2;      //min table size    
+var gnMaxDim  = 100;    //max table size
+var gColorProcessed = '#777777'; //color of a marked processed cell
+var gColorEnding = '#E67518';    //color of a marked start/finish point    
+var gColorDefault = '#CCC';      //color of a non-marked table cell
+var gColorObstacle = '#1C2833';  //color of a marked obstacle cell
+var gColorRoute     = '#52BE80'; //color of a table cell if the route is found
+
 
 
 //Cell on a game board
@@ -142,13 +145,11 @@ function InitView(){
     
     gnDim = document.getElementById("nDim").value;
     
-    if (gnDim < 1) {
-        //ask for natural number
-        alert('Please make sure you enter integer positive number!');
-        return;   
-    }    
-        
-    
+    if (gnDim < gnMinDim) 
+        throw new RangeError("be less than " + gnMinDim);
+    else if(gnDim > gnMaxDim) 
+        throw new RangeError("exceed " + gnMaxDim);
+
     eDrawArea = document.getElementById("DrawArea");
     table = document.getElementById('Table');
     if (table) eDrawArea.removeChild(table);
@@ -186,8 +187,14 @@ function DrawTable(){
 
 function CreateTable(){
     
-    InitView();    
-    DrawTable();
+    try{
+        InitView();    
+        DrawTable();
+    }catch(err){
+        if (err instanceof RangeError) {
+            alert("Table size should not " + err.message + "!");
+        }    
+    }    
     
 }
 

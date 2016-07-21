@@ -7,7 +7,7 @@
     </head>
     <body>
         <label for="nDim">Enter board size </label>
-        <input type="number" min=2 id="nDim" 
+        <input type="number" min="2" max="100" id="nDim"  
             onkeypress="return event.charCode >= 48 && event.charCode <= 57"
             onkeydown = "if (event.keyCode == 13) document.getElementById('bCreate').click()"/>
         <button id="bCreate" class="butt" onClick="CreateTable()">CREATE</button>
