@@ -241,7 +241,7 @@ function ToggleEnds(elemId){
                 gsStart = gsFinish;
                 gsFinish = elemId;    
                 eCell.style.backgroundColor = gColorEnding;
-            //no Start point picked - ??is this ever possible    
+            //no Start point picked
             }else if(!gsStart){
                 gsStart = elemId;
                 eCell.style.backgroundColor = gColorEnding;
@@ -268,6 +268,14 @@ function ToggleObst(elemId){
         gaBarriers.splice(index,1);
         eCell.style.backgroundColor = gColorDefault;
     }else{
+        if(elemId == gsStart){ 
+            gsStart = '';
+            document.getElementById('bProceed').disabled = true;
+        }    
+        if(elemId == gsFinish){ 
+            gsFinish = '';
+            document.getElementById('bProceed').disabled = true;
+        }    
         eCell.style.backgroundColor = gColorObstacle;
         gaBarriers.push(elemId);
         
