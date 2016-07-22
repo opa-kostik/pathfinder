@@ -5,13 +5,6 @@ var viewFinishId  = "";     //view - end point
 var dim     = 0;      //view - table size
 var mindim  = 2;      //min table size    
 var maxDim  = 100;    //max table size
-var colorProcessed = '#777777'; //color of a marked processed cell
-var colorEnding = '#E67518';    //color of a marked start/finish point    
-var colorDefault = '#CCC';      //color of a non-marked table cell
-var colorObstacle = '#1C2833';  //color of a marked obstacle cell
-var colorRoute     = '#52BE80'; //color of a table cell if the route is found
-
-
 
 //Cell on a game board
 var Cell = function(xPos, yPos, currentWeight, parentCell ){
@@ -35,7 +28,8 @@ var Pathfinder = function(dim, a, b, obst){
     
 Pathfinder.prototype.getRemainingWeight = function(currentCell){
     
-    return Math.abs(currentCell.xPos - this.finishPoint.xPos) + Math.abs(currentCell.yPos - this.finishPoint.yPos);
+    return Math.abs(currentCell.xPos - this.finishPoint.xPos) 
+         + Math.abs(currentCell.yPos - this.finishPoint.yPos);
     
 }
 
@@ -88,7 +82,7 @@ Pathfinder.prototype.addCandidate = function(currentCell){
 
     if (ind > -1){ 
         //found
-        if (this.candidates.currentWeight <= currentCell.currentWeight){
+        if (this.candidates[ind].currentWeight <= currentCell.currentWeight){
             return false;
         }else{
             //the better one found, current to be deleted
@@ -173,6 +167,7 @@ function DrawTable(){
             td[j].setAttribute('id','X'+ ( i + 1 ) + 'Y' + ( j + 1 ) );
             td[j].addEventListener('click', function(e){
                 var viewElemId = e.srcElement.id;
+                //set event when the cell is pressed
                 ToggleCell(viewElemId);
             });
             tr[i].appendChild(td[j]);
@@ -191,6 +186,8 @@ function CreateTable(){
     }catch(err){
         if (err instanceof RangeError) {
             alert("Table size should not " + err.message + "!");
+        }else{
+            alert(err);
         }    
     }    
     
@@ -206,78 +203,80 @@ function ToggleCell(elemId) {
 
 function ToggleEnds(elemId){
 
-    var viewElem    = document.getElementById(elemId);
+    var viewElem = document.getElementById(elemId);
     
     //check if the cell is already marked as obstacle => reset it
     var index = viewBarriers.indexOf(elemId);
     if ( index >= 0 ){
         // Delete element
         viewBarriers.splice(index,1);
+        viewElem.classList.toggle('obstacle');
     }
     
     switch ( elemId ){
         //if we've marked a cell that was previously set as start 
         case viewStartId:
             viewStartId = '';
-            viewElem.style.backgroundColor = colorDefault;
             break;
         //..or set as an end    
         case viewFinishId: 
             viewFinishId = '';
-            viewElem.style.backgroundColor = colorDefault;
             break;
         //if the cell is not previously marked as Start or Finish    
         default:
             //neither Start nor Finish cell've been picked(marked) so far
             if (!viewStartId && !viewFinishId){
                 viewStartId = elemId;    
-                viewElem.style.backgroundColor = colorEnding;
             //both Start and Finish cells are picked
             }else if(viewStartId && viewFinishId){
                 var viewOldElem = document.getElementById(viewStartId);
-                viewOldElem.style.backgroundColor = colorDefault;
+                viewOldElem.classList.toggle("end");
                 viewStartId = viewFinishId;
                 viewFinishId = elemId;    
-                viewElem.style.backgroundColor = colorEnding;
             //no Start point picked
             }else if(!viewStartId){
                 viewStartId = elemId;
-                viewElem.style.backgroundColor = colorEnding;
             //no Finish picked    
             }else if(!viewFinishId){
                 viewFinishId = elemId;
-                viewElem.style.backgroundColor = colorEnding;
             }
     }    
+    viewElem.classList.toggle('end');
     
     //Activate Launch('Find route') button if only we've picked 
     //...both Start and Finish
+    viewElem = document.getElementById('bProceed');
     if (viewStartId && viewFinishId)
-        document.getElementById('bProceed').disabled = false;
+        viewElem.disabled = false;
     else
-        document.getElementById('bProceed').disabled = true;
+        viewElem.disabled = true;
 }
 
 function ToggleObst(elemId){
+
     var viewElem = document.getElementById(elemId);
     var index = viewBarriers.indexOf(elemId);
+    
+    viewElem.classList.toggle('obstacle');
+    
+    //if cell is already in the obstacle list
     if ( index >= 0 ){
         // Delete element
         viewBarriers.splice(index,1);
-        viewElem.style.backgroundColor = colorDefault;
     }else{
         if(elemId == viewStartId){ 
             viewStartId = '';
+            viewElem.classList.toggle('end');
             document.getElementById('bProceed').disabled = true;
         }    
-        if(elemId == viewFinishId){ 
+        else if(elemId == viewFinishId){ 
             viewFinishId = '';
+            viewElem.classList.toggle('end');
             document.getElementById('bProceed').disabled = true;
         }    
-        viewElem.style.backgroundColor = colorObstacle;
         viewBarriers.push(elemId);
-        
     }
+  
 }
 
 //get line index based on a cell's name
@@ -354,7 +353,7 @@ function StartGame(){
             //display as processed in the table view
             viewElem = document.getElementById('X' + candidate.xPos + 'Y' + candidate.yPos);
             if (candidate.currentWeight != 0)
-                viewElem.style.backgroundColor = colorProcessed;
+                viewElem.classList.toggle('processed');
                 
         }//while(true)
         
@@ -366,13 +365,12 @@ function StartGame(){
                 //draw a route
                 viewElem = document.getElementById('X' + oCurrent.xPos + 'Y' + oCurrent.yPos);
                 if (nWeight  != Game.finishPoint.currentWeight) 
-                    viewElem.style.backgroundColor = colorRoute;
+                    viewElem.classList.add('route');
                 oCurrent = oCurrent.parentCell;
                 //display path order
                 viewElem.innerHTML = nWeight--;
             }
             viewElem = document.getElementById('X' + oCurrent.xPos + 'Y' + oCurrent.yPos);
-            viewElem.style.backgroundColor = colorEnding;
             
         }else{
             //GAME OVER!!!
@@ -387,16 +385,6 @@ function StartGame(){
 
 function ResetTableView(){
     
-    var viewElem;
-    
-    for(i = 1; i <= dim; i++){
-        for(var j = 1; j <= dim; j++){
-            viewElem = document.getElementById('X' + i + 'Y' + j);
-            viewElem.style.backgroundColor = colorDefault;
-            viewElem.innerHTML = "";
-        }
-    }
-    
     
 }
 
@@ -404,21 +392,15 @@ function SoftRefresh(){
     
     var viewElem;
     
-    ResetTableView();
-    
-    //restore obstacles
-    for(i = 0; i < viewBarriers.length; i++){
-        viewElem = document.getElementById(viewBarriers[i]);
-        viewElem.style.backgroundColor = colorObstacle;
+    //clear CSS class for processed and included in  the route
+    for(i = 1; i <= dim; i++){
+        for(var j = 1; j <= dim; j++){
+            viewElem = document.getElementById('X' + i + 'Y' + j);
+            viewElem.classList.remove('route', 'processed');
+            viewElem.innerHTML = "";
+        }
     }
-    
-    //restore Endpoints
-    viewElem = document.getElementById(viewStartId);    
-    viewElem.style.backgroundColor = colorEnding;
-    
-    viewElem = document.getElementById(viewFinishId);    
-    viewElem.style.backgroundColor = colorEnding;
-    
+
     document.getElementById("bProceed").innerHTML = "FIND ROUTE";
     
 }
@@ -430,6 +412,6 @@ function Proceed(){
             break;
         case "FIND ROUTE":
             StartGame();
-            break
+            break;
     }    
 }
