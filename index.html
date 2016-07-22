@@ -13,13 +13,11 @@
         <button id="bCreate" class="butt" onClick="CreateTable()">CREATE</button>
         <br>
         <br>
-        <!--<form id="ControlBlock">-->
-            <!--<button id="bStart"    type="button" class="butt tg-start" onclick=drawStart() >START</button>-->
-            <!--<button id="bFinish"   type="button" class="butt tg-finish" onclick=drawFinish() >FINISH</button>-->
-            <!--<button id="bObstacle" type="button" class="butt tg-brick" onclick=drawBricks() >BRICK</button>-->
         <div>    
-            <input type="radio" name="action" id="r1" checked="checked">Mark start/end</input>
-            <input type="radio" name="action" id="r2">Draw obstacles</input>
+            <input type="radio" name="action" id="r1" checked="checked">
+            <label for="r1">Mark start/end</label>
+            <input type="radio" name="action" id="r2">
+            <label for="r2">Draw obstacles</label>
         </div>    
         <br>
         <button id="bProceed" disabled="true" type="button" class="butt" onclick=Proceed()>FIND ROUTE</button>
