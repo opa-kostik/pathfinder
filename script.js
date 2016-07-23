@@ -7,6 +7,26 @@ var mindim  = 2;            //view - min table size
 var maxDim  = 100;          //view - max table size
 var isGameEnded = false;    //flag is true when the game needs to be restarted
 
+//HTML Events
+window.addEventListener("load", function () {
+    
+    var elem; 
+    
+    elem = document.getElementById("dim");
+    elem.addEventListener("keydown", function(event){
+        if (event.keyCode == 13) document.getElementById('bCreate').click();
+    });
+    elem.addEventListener("keypress", function(event){
+        return event.charCode >= 48 && event.charCode <= 57
+    });
+    
+    elem = document.getElementById("bCreate");
+    elem.addEventListener("click", CreateTable); 
+    
+    elem = document.getElementById("bProceed");
+    elem.addEventListener("click", Proceed); 
+});
+
 //Cell on a game board
 var Cell = function(xPos, yPos, currentWeight, parentCell ){
     //id: "",     //Candidate id, just for the case
@@ -117,11 +137,6 @@ Pathfinder.prototype.addCandidate = function(currentCell){
             
     
     return true;
-}
-
-
-function checkInput(event){
-    return event.charCode >= 48 && event.charCode <= 57
 }
 
 //Initialize view variables
@@ -417,3 +432,4 @@ function Proceed(){
             break;
     }    
 }
+
