@@ -1,10 +1,11 @@
 
-var viewBarriers = [];    //view - obstacles
+var viewBarriers = [];      //view - obstacles
 var viewStartId   = "";     //view - start point
 var viewFinishId  = "";     //view - end point
-var dim     = 0;      //view - table size
-var mindim  = 2;      //min table size    
-var maxDim  = 100;    //max table size
+var dim     = 0;            //view - table size
+var mindim  = 2;            //view - min table size    
+var maxDim  = 100;          //view - max table size
+var isGameEnded = false;    //flag is true when the game needs to be restarted
 
 //Cell on a game board
 var Cell = function(xPos, yPos, currentWeight, parentCell ){
@@ -194,6 +195,11 @@ function CreateTable(){
 }
 
 function ToggleCell(elemId) {
+    
+    if (isGameEnded == true){
+        SoftRefresh();
+    }
+    
     if (document.getElementById("r1").checked) 
         ToggleEnds(elemId);
     else 
@@ -371,22 +377,18 @@ function StartGame(){
                 viewElem.innerHTML = nWeight--;
             }
             viewElem = document.getElementById('X' + oCurrent.xPos + 'Y' + oCurrent.yPos);
-            
         }else{
             //GAME OVER!!!
             alert("The route can't be found!");
         }
         document.getElementById("bProceed").innerHTML = "REFRESH";
+        isGameEnded = true;
+        
     }catch(err){
         SoftRefresh();
         alert(err.message);
     }
 }    
-
-function ResetTableView(){
-    
-    
-}
 
 function SoftRefresh(){
     
@@ -402,7 +404,7 @@ function SoftRefresh(){
     }
 
     document.getElementById("bProceed").innerHTML = "FIND ROUTE";
-    
+    isGameEnded = false;
 }
 
 function Proceed(){
