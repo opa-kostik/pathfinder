@@ -1,30 +1,47 @@
 
-var viewBarriers = [];      //view - obstacles
-var viewStartId   = "";     //view - start point
-var viewFinishId  = "";     //view - end point
-var dim     = 0;            //view - table size
-var mindim  = 2;            //view - min table size    
-var maxDim  = 100;          //view - max table size
-var isGameEnded = false;    //flag is true when the game needs to be restarted
+var viewBarriers        = [];     //view - obstacles
+var viewStartId         = "";     //view - start point
+var viewFinishId        = "";     //view - end point
+var boardSize           = 0;      //view - table size
+var boardSizeMin        = 2;      //view - min table size    
+var boardSizeMax        = 100;    //view - max table size
+var isGameEnded         = false;  //flag is true when the game needs to be restarted
+var drawOption          = -1;     //
+var drawOptionEnd       = 0;      //draw end
+var drawOptionObstacle  = 1;      //draw obstacle    
 
 //HTML Events
-window.addEventListener("load", function () {
+window.addEventListener('load', function () {
     
     var elem; 
     
-    elem = document.getElementById("dim");
+    elem = document.getElementById('boardSize');
     elem.addEventListener("keydown", function(event){
-        if (event.keyCode == 13) document.getElementById('bCreate').click();
+        if (event.keyCode == 13) document.getElementById('boardSize__create').click();
     });
     elem.addEventListener("keypress", function(event){
         return event.charCode >= 48 && event.charCode <= 57
     });
     
-    elem = document.getElementById("bCreate");
-    elem.addEventListener("click", CreateTable); 
-    
-    elem = document.getElementById("bProceed");
-    elem.addEventListener("click", Proceed); 
+    document.getElementById('boardSize__create').addEventListener('click', CreateTable); 
+    document.getElementById('execute__proceed').addEventListener('click', StartGame);
+    document.getElementById('execute__refresh').addEventListener('click', SoftRefresh);
+    document.getElementById('drawOption__end').addEventListener('click', function(){
+        drawOption = drawOptionEnd;
+    });
+    document.getElementById('drawOption__obstacle').addEventListener('click', function(){
+        drawOption = drawOptionObstacle;
+    });
+    document.getElementById('drawArea').addEventListener('dragstart', function(event){
+        event.preventDefault(); 
+        return false
+        
+    });
+    document.getElementById('drawArea').addEventListener('drop', function(event){
+        event.preventDefault(); 
+        return false
+        
+    });    
 });
 
 //Cell on a game board
@@ -38,7 +55,7 @@ var Cell = function(xPos, yPos, currentWeight, parentCell ){
  }
 
 var Pathfinder = function(dim, a, b, obst){
-    this.dim             = dim;
+    this.boardSize       = dim;
     this.startPoint      = a;
     this.finishPoint     = b;
     this.obstacles       = obst;    
@@ -61,9 +78,9 @@ Pathfinder.prototype.getNeighbour = function(currentCell, xOffset, yOffset){
     var yPosNew = currentCell.yPos + yOffset;
     
     //check if the neighbour is out of bounds
-    if ( xPosNew > this.dim || 
-         yPosNew > this.dim ||
-         xPosNew < 1         ||
+    if ( xPosNew > this.boardSize || 
+         yPosNew > this.boardSize ||
+         xPosNew < 1              ||
          yPosNew < 1){
         //do not proceed
         return;
@@ -144,24 +161,27 @@ function InitView(){
     
     var table;
     var drawArea;
+    var elem;
     
     viewBarriers = [];
     viewStartId   = "";
     viewFinishId  = "";
     
-    document.getElementById("bProceed").disabled  = true;
-    document.getElementById("bProceed").innerHTML = "FIND ROUTE";
-    document.getElementById("r1").checked = true;
+    if (document.getElementById('drawOption__end').checked)
+        drawOption = drawOptionEnd;
+    else
+        drawOption = drawOptionObstacle;
+        
+    boardSize = document.getElementById('boardSize').value;
     
-    dim = document.getElementById("dim").value;
+    if (boardSize < boardSizeMin) 
+        throw new RangeError("be less than " + boardSizeMin);
+    else if(boardSize > boardSizeMax) 
+        throw new RangeError("exceed " + boardSizeMax);
     
-    if (dim < mindim) 
-        throw new RangeError("be less than " + mindim);
-    else if(dim > maxDim) 
-        throw new RangeError("exceed " + maxDim);
-
-    drawArea = document.getElementById("DrawArea");
-    table = document.getElementById('Table');
+    document.getElementById('execute__proceed').disabled  = true;
+    drawArea = document.getElementById('drawArea');
+    table = document.getElementById('drawArea__table');
     if (table) drawArea.removeChild(table);
     
 }
@@ -170,19 +190,23 @@ function DrawTable(){
     
     var tr = [];
     var td = [];
-    var drawArea = document.getElementById("DrawArea");
-    var table = document.createElement('table');
+    var elem;
     
-    table.setAttribute('id', 'Table' )
+    var drawArea = document.getElementById('drawArea');
+    var table    = document.createElement('table');
+    table.setAttribute('id','drawArea__table' );
+    table.classList.add('drawArea__table');
     
-    for (var i = 0; i < dim; i++){
+    for (var i = 0; i < boardSize; i++){
         tr[i] = document.createElement('tr');   
+        tr[i].classList.add('drawArea__table__row')
         //var td = [];
-        for (var j = 0; j < dim; j++){
+        for (var j = 0; j < boardSize; j++){
             td[j] = document.createElement('td');   
             td[j].setAttribute('id','X'+ ( i + 1 ) + 'Y' + ( j + 1 ) );
-            td[j].addEventListener('click', function(e){
-                var viewElemId = e.srcElement.id;
+            td[j].classList.add('drawArea__table__cell');
+            td[j].addEventListener('click', function(event){
+                var viewElemId = event.srcElement.id;
                 //set event when the cell is pressed
                 ToggleCell(viewElemId);
             });
@@ -211,27 +235,31 @@ function CreateTable(){
 
 function ToggleCell(elemId) {
     
+    var viewElem;
+    
     if (isGameEnded == true){
         SoftRefresh();
     }
     
-    if (document.getElementById("r1").checked) 
-        ToggleEnds(elemId);
-    else 
-        ToggleObst(elemId);    
+    switch(drawOption){
+        case 0: ToggleEnds(elemId); break;
+        case 1: ToggleObst(elemId); break;
+        default:break;//should be error   
+    }
         
 }
 
 function ToggleEnds(elemId){
 
-    var viewElem = document.getElementById(elemId);
+    var viewElem; 
+    viewElem = document.getElementById(elemId);
     
     //check if the cell is already marked as obstacle => reset it
     var index = viewBarriers.indexOf(elemId);
     if ( index >= 0 ){
         // Delete element
         viewBarriers.splice(index,1);
-        viewElem.classList.toggle('obstacle');
+        viewElem.classList.toggle('drawArea__table__cell--obstacle');
     }
     
     switch ( elemId ){
@@ -251,7 +279,7 @@ function ToggleEnds(elemId){
             //both Start and Finish cells are picked
             }else if(viewStartId && viewFinishId){
                 var viewOldElem = document.getElementById(viewStartId);
-                viewOldElem.classList.toggle("end");
+                viewOldElem.classList.toggle('drawArea__table__cell--end');
                 viewStartId = viewFinishId;
                 viewFinishId = elemId;    
             //no Start point picked
@@ -262,15 +290,14 @@ function ToggleEnds(elemId){
                 viewFinishId = elemId;
             }
     }    
-    viewElem.classList.toggle('end');
+    viewElem.classList.toggle('drawArea__table__cell--end');
     
     //Activate Launch('Find route') button if only we've picked 
     //...both Start and Finish
-    viewElem = document.getElementById('bProceed');
     if (viewStartId && viewFinishId)
-        viewElem.disabled = false;
+        document.getElementById('execute__proceed').disabled = false;
     else
-        viewElem.disabled = true;
+        document.getElementById('execute__proceed').disabled = true;
 }
 
 function ToggleObst(elemId){
@@ -278,7 +305,7 @@ function ToggleObst(elemId){
     var viewElem = document.getElementById(elemId);
     var index = viewBarriers.indexOf(elemId);
     
-    viewElem.classList.toggle('obstacle');
+    viewElem.classList.toggle('drawArea__table__cell--obstacle');
     
     //if cell is already in the obstacle list
     if ( index >= 0 ){
@@ -287,13 +314,13 @@ function ToggleObst(elemId){
     }else{
         if(elemId == viewStartId){ 
             viewStartId = '';
-            viewElem.classList.toggle('end');
-            document.getElementById('bProceed').disabled = true;
+            viewElem.classList.toggle('drawArea__table__cell--end');
+            document.getElementById('execute__proceed').disabled = true;
         }    
         else if(elemId == viewFinishId){ 
             viewFinishId = '';
-            viewElem.classList.toggle('end');
-            document.getElementById('bProceed').disabled = true;
+            viewElem.classList.toggle('drawArea__table__cell--end');
+            document.getElementById('execute__proceed').disabled = true;
         }    
         viewBarriers.push(elemId);
     }
@@ -330,7 +357,7 @@ function StartGame(){
         var startPoint  = new Cell(getX(viewStartId) , getY(viewStartId) , 0);
         var finishPoint = new Cell(getX(viewFinishId), getY(viewFinishId));
         
-        var Game = new Pathfinder(dim, startPoint, finishPoint, obstacles);
+        var Game = new Pathfinder(boardSize, startPoint, finishPoint, obstacles);
         
         //add start point to the list of Processed cells
         candidate = startPoint;
@@ -367,36 +394,41 @@ function StartGame(){
             //there are no candidates left => end of game, no route
             if (!Game.candidates.length) break;
             
-            //Now let's pick a candidate with a least 'Total weight' which is (CurrentWeight + RemainingWeight)
-            //Considering the list of candidates is sorted by the 'Total weight'  - we pick the 1st one
+            //Now let's pick a candidate with a least 'Total weight' 
+            //which is (CurrentWeight + RemainingWeight)
+            //Considering the list of candidates is sorted by the 
+            //'Total weight' - we pick the 1st one
             candidate = Game.candidates.shift();
             
             //display as processed in the table view
-            viewElem = document.getElementById('X' + candidate.xPos + 'Y' + candidate.yPos);
+            viewElem = document.getElementById('X' + candidate.xPos 
+                                             + 'Y' + candidate.yPos);
             if (candidate.currentWeight != 0)
-                viewElem.classList.toggle('processed');
+                viewElem.classList.toggle('drawArea__table__cell--processed');
                 
         }//while(true)
         
         if (Game.isFinishReached){
             //WIN!!!
-            var oCurrent = Game.finishPoint;
-            var nWeight  = Game.finishPoint.currentWeight;
-            while(oCurrent.xPos != startPoint.xPos || oCurrent.yPos != startPoint.yPos){
+            var curCell = Game.finishPoint;
+            var curWeight  = Game.finishPoint.currentWeight;
+            while(curCell.xPos != startPoint.xPos || curCell.yPos != startPoint.yPos){
                 //draw a route
-                viewElem = document.getElementById('X' + oCurrent.xPos + 'Y' + oCurrent.yPos);
-                if (nWeight  != Game.finishPoint.currentWeight) 
-                    viewElem.classList.add('route');
-                oCurrent = oCurrent.parentCell;
+                viewElem = document.getElementById('X' + curCell.xPos + 'Y' + curCell.yPos);
+                if (curWeight  != Game.finishPoint.currentWeight) 
+                    viewElem.classList.add('drawArea__table__cell--route');
+                curCell = curCell.parentCell;
                 //display path order
-                viewElem.innerHTML = nWeight--;
+                viewElem.innerHTML = curWeight--;
             }
-            viewElem = document.getElementById('X' + oCurrent.xPos + 'Y' + oCurrent.yPos);
+            viewElem = document.getElementById('X' + curCell.xPos + 'Y' + curCell.yPos);
         }else{
             //GAME OVER!!!
             alert("The route can't be found!");
         }
-        document.getElementById("bProceed").innerHTML = "REFRESH";
+        document.getElementById("execute__proceed").classList.add('execute__button--hidden');
+        document.getElementById("execute__refresh").classList.remove('execute__button--hidden');
+        document.getElementById("execute__refresh").disabled = false;
         isGameEnded = true;
         
     }catch(err){
@@ -407,29 +439,19 @@ function StartGame(){
 
 function SoftRefresh(){
     
-    var viewElem;
+    var elemList = [];
     
-    //clear CSS class for processed and included in  the route
-    for(i = 1; i <= dim; i++){
-        for(var j = 1; j <= dim; j++){
+    // clear CSS class for processed and included in  the route
+    for(i = 1; i <= boardSize; i++){
+        for(var j = 1; j <= boardSize; j++){
             viewElem = document.getElementById('X' + i + 'Y' + j);
-            viewElem.classList.remove('route', 'processed');
+            viewElem.classList.remove('drawArea__table__cell--route', 
+                                      'drawArea__table__cell--processed');
             viewElem.innerHTML = "";
         }
     }
-
-    document.getElementById("bProceed").innerHTML = "FIND ROUTE";
+    
+    document.getElementById('execute__proceed').classList.remove('execute__button--hidden');
+    document.getElementById('execute__refresh').classList.add('execute__button--hidden');
     isGameEnded = false;
 }
-
-function Proceed(){
-    switch(document.getElementById("bProceed").innerHTML){
-        case "REFRESH":
-            SoftRefresh();
-            break;
-        case "FIND ROUTE":
-            StartGame();
-            break;
-    }    
-}
-

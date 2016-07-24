@@ -5,22 +5,41 @@
         <link rel="stylesheet" href="main.css">
     </head>
     <body>
-        <label for="dim">Enter board size </label>
-        <input type="number" min="2" max="100" id="dim"/>
-        <button id="bCreate" class="butt">CREATE</button>
+        <div class="boardSize">
+            <label  class="boardSize__label" 
+                for="boardSize">Enter board size </label>
+            <input  class="boardSize__value" 
+                id="boardSize" type="number" min="2" max="100" />
+            <button class="boardSize__create boardSize__create--blue" 
+                id="boardSize__create">CREATE</button>
+        </div>
         <br>
-        <br>
-        <div>    
-            <input type="radio" name="action" id="r1" checked="checked">
-            <label for="r1">Mark start/end</label>
-            <input type="radio" name="action" id="r2">
-            <label for="r2">Draw obstacles</label>
+        <div class="drawOption">    
+            <input class="drawOption__end" 
+                id="drawOption__end" type="radio" 
+                name="action" checked="checked">
+            <label class="drawOption__end__label" 
+                for="drawOption__end">Mark start/end</label>
+            <input class="drawOption__obstacle" 
+                id="drawOption__obstacle" type="radio" name="action">
+            <label class="drawOption__obstacle__label" 
+                for="drawOption__obstacle">Draw obstacles</label>
         </div>    
         <br>
-        <button id="bProceed" disabled="true" type="button" class="butt">FIND ROUTE</button>
+        <div class="execute">    
+            <button class="execute__button 
+                           execute__button--blue" 
+                id="execute__proceed" disabled="true"  
+                type="button">FIND ROUTE</button>
+            <button class="execute__button 
+                           execute__button--blue  
+                           execute__button--hidden" 
+                id="execute__refresh" disabled="false" 
+                type="button">REFRESH</button>
+        </div>
         <br>
         <br>
-        <div id="DrawArea"></div>
+        <div class="drawArea" id="drawArea"></div>
 
         <script type="text/javascript" src="script.js"></script>
     </body>
