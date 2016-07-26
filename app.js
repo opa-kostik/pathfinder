@@ -39,34 +39,27 @@ App.prototype.UpdateEnd = function(cellId){
 
     var cellType = this.GetCellType(cellId);
     
-    switch(cellType){
-        case this.cellType_Start:
-            //Add
-            this.viewStartId = '';
-            this.viewBarriers.push(cellId);
-            break;
-        case this.cellType_Finish:
-            //Add
-            this.viewFinishId = '';
-            this.viewBarriers.push(cellId);
-            break;
-        default:
-            if (cellType == this.cellType_Obstacle){
-                // Delete
-                var index = this.viewBarriers.indexOf(cellId);
-                this.viewBarriers.splice(index,1);
-            }    
-            //either Start or Finish cell 've been selected so far
-            if (!this.viewStartId)
-                this.viewStartId = cellId;    
-            else if(!this.viewFinishId)
-                this.viewFinishId = cellId;
-            else{    
-                //take the Start cell as a substitute
-                var cellIdOld = this.viewStartId;
-                this.viewStartId = this.viewFinishId;
-                this.viewFinishId = cellId;    
-            }
+    if(cellType == this.cellType_Start)
+        this.viewStartId = '';
+    else if (cellType == this.cellType_Finish)
+        this.viewFinishId = '';
+    else{
+        if (cellType == this.cellType_Obstacle){
+            // Delete
+            var index = this.viewBarriers.indexOf(cellId);
+            this.viewBarriers.splice(index,1);
+        }    
+        //either Start or Finish cell 've not been selected so far
+        if (!this.viewStartId)
+            this.viewStartId = cellId;    
+        else if(!this.viewFinishId)
+            this.viewFinishId = cellId;
+        else{    
+            //if both selecte already -> take the Start cell as a substitute
+            var cellIdOld = this.viewStartId;
+            this.viewStartId = this.viewFinishId;
+            this.viewFinishId = cellId;    
+        }
     }    
     //return value if a cell was substituted
     return cellIdOld;
@@ -77,24 +70,17 @@ App.prototype.UpdateObst = function(cellId){
     var index;
     var cellType = this.GetCellType(cellId);
     
-    switch(cellType){
-        case this.cellType_Obstacle:
-            // Delete
-            index = this.viewBarriers.indexOf(cellId);
-            this.viewBarriers.splice(index,1);
-            break;
-        case this.cellType_Start:
-            //Add
+    if(cellType == this.cellType_Obstacle){
+        // Delete
+        index = this.viewBarriers.indexOf(cellId);
+        this.viewBarriers.splice(index,1);
+    } else{   
+        
+        this.viewBarriers.push(cellId);
+        if (cellType == this.cellType_Start)
             this.viewStartId = '';
-            this.viewBarriers.push(cellId);
-            break;
-        case this.cellType_Finish:
-            //Add
+        else if (cellType == this.cellType_Finish)   
             this.viewFinishId = '';
-            this.viewBarriers.push(cellId);
-            break;
-        default:     
-            this.viewBarriers.push(cellId);
     }
     
 };
@@ -146,31 +132,18 @@ App.prototype.SetupGame = function(){
 
 App.prototype.ProcessCell = function(candidate){
     
-    //below
-    var neighbourCell = this.Game.getNeighbour(candidate, 1, 0);
-    if (neighbourCell){
-        this.Game.addCandidate(neighbourCell);
-        if (this.Game.isFinishReached) return;
-    }
-    //above
-    neighbourCell = this.Game.getNeighbour(candidate, -1, 0);
-    if (neighbourCell){
-        this.Game.addCandidate(neighbourCell);
-        if (this.Game.isFinishReached) return;
-    }
-    //right
-    neighbourCell = this.Game.getNeighbour(candidate, 0, 1);
-    if (neighbourCell){
-        this.Game.addCandidate(neighbourCell);
-        if (this.Game.isFinishReached) return;
-    }
-    //left
-    neighbourCell = this.Game.getNeighbour(candidate, 0, -1);
-    if (neighbourCell){
-        this.Game.addCandidate(neighbourCell);
-        if (this.Game.isFinishReached) return;
-    }
-    
+    for (var i = -1; i <= 1; i++)
+        for (var j = -1; j <= 1; j++){
+            if ( Math.abs(i + j)%2 != 1)
+                continue;
+        
+            var neighbourCell = this.Game.getNeighbour(candidate, i, j);
+            if (neighbourCell){
+                this.Game.addCandidate(neighbourCell);
+                if (this.Game.isFinishReached) return;
+            }
+        }    
+        
     //there are no candidates left => end of game, no route
     if (!this.Game.candidates.length) return;
     

@@ -17,12 +17,12 @@ Controller.prototype.CreateTable = function(){
 
 Controller.prototype.InitView = function(){
     
-    var size = Number(document.getElementById('boardSize').value);
-    var drawArea = document.getElementById('drawArea');
+    var size = Number(ById('boardSize').value);
+    var drawArea = ById('drawArea');
 
     this.app = new App(size);
     
-    var table = document.getElementById('drawArea__table');
+    var table = ById('drawArea__table');
     if (table) 
         drawArea.removeChild(table);
     
@@ -31,18 +31,18 @@ Controller.prototype.InitView = function(){
 Controller.prototype.DrawTable = function(){
     
     
-    var table    = document.createElement('table');
+    var table    = CreateElem('table');
     table.setAttribute('id','drawArea__table' );
     table.classList.add('drawArea__table');
     
     var tr = [];
     var td = [];
     for (var i = 0; i < this.app.GetBoardSize(); i++){
-        tr[i] = document.createElement('tr');   
+         tr[i] = CreateElem('tr');   
         tr[i].classList.add('drawArea__table__row');
         //var td = [];
         for (var j = 0; j < this.app.GetBoardSize(); j++){
-            td[j] = document.createElement('td');   
+            td[j] = CreateElem('td');   
             td[j].setAttribute('id','X'+ ( i + 1 ) + 'Y' + ( j + 1 ) );
             td[j].classList.add('drawArea__table__cell');
             
@@ -56,11 +56,18 @@ Controller.prototype.DrawTable = function(){
         }
         table.appendChild(tr[i]);
     }
-    var drawArea = document.getElementById('drawArea');
+    var drawArea = ById('drawArea');
     drawArea.appendChild(table);
     
-    document.getElementById('execute__proceed').disabled  = true;
-    document.getElementById('generate__button').disabled  = false;
+    var elem = ById('execute__proceed');
+    elem.classList.remove('execute__button--hidden');
+    elem.disabled = true;
+    
+    elem = ById("execute__refresh")
+    elem.classList.add('execute__button--hidden');
+    
+    elem = ById('generate__button')
+    elem.disabled  = false;
 
 };
 
@@ -78,7 +85,7 @@ Controller.prototype.StartGame = function(){
         currentCell = this.app.ProcessCell(currentCell);
         if(currentCell){    
             //display as processed in the table view
-            viewElem = document.getElementById('X' + currentCell.xPos +
+            viewElem = ById('X' + currentCell.xPos +
                                                'Y' + currentCell.yPos);
             if (currentCell.currentWeight != 0)
             viewElem.classList.toggle('drawArea__table__cell--processed');
@@ -86,9 +93,13 @@ Controller.prototype.StartGame = function(){
     }while(currentCell);
     
     this.app.isGameEnded = true;
-    document.getElementById("execute__proceed").classList.add('execute__button--hidden');
-    document.getElementById("execute__refresh").classList.remove('execute__button--hidden');
-    document.getElementById("execute__refresh").disabled = false;
+    var elem = ById("execute__proceed");
+    elem.classList.add('execute__button--hidden');
+    elem.disabled = true;
+    
+    elem = ById("execute__refresh")
+    elem.classList.remove('execute__button--hidden');
+    
     
     
     if (this.app.Game.isFinishReached){
@@ -96,7 +107,7 @@ Controller.prototype.StartGame = function(){
         var route = this.app.GetRoute();
     
         for(var i = 0; i < route.length; i++){
-            viewElem = document.getElementById('X' + route[i].xPos + 'Y' + route[i].yPos);
+            viewElem = ById('X' + route[i].xPos + 'Y' + route[i].yPos);
             if(route[i].remainingWeight != 0){
                 viewElem.classList.add('drawArea__table__cell--route');    
             }    
@@ -117,10 +128,10 @@ Controller.prototype.ToggleCell = function(elemId) {
     }
     
     switch(true){ 
-        case document.getElementById('drawOption__end').checked :
+        case ById('drawOption__end').checked :
             this.ToggleEnds(elemId);
             break;
-        case document.getElementById('drawOption__obstacle').checked :
+        case ById('drawOption__obstacle').checked :
             this.ToggleObst(elemId);
             break;
         default: //error
@@ -130,7 +141,7 @@ Controller.prototype.ToggleCell = function(elemId) {
 
 Controller.prototype.ToggleEnds = function(elemId){
 
-    var viewElem = document.getElementById(elemId);
+    var viewElem = ById(elemId);
     viewElem.classList.toggle('drawArea__table__cell--end');
     
     var cellType = this.app.GetCellType(elemId);
@@ -142,16 +153,16 @@ Controller.prototype.ToggleEnds = function(elemId){
     
     //Both Start and Finish have been already selected -> reset one of them
     if (viewElemOld)
-        document.getElementById(viewElemOld).classList.toggle('drawArea__table__cell--end');
+        ById(viewElemOld).classList.toggle('drawArea__table__cell--end');
     
     //set property for 'Start Game' 
-    document.getElementById('execute__proceed').disabled = !this.app.IsStartGameAllowed();
+    ById('execute__proceed').disabled = !this.app.IsStartGameAllowed();
     
 };
 
 Controller.prototype.ToggleObst = function(elemId){
 
-    var viewElem = document.getElementById(elemId);
+    var viewElem = ById(elemId);
     viewElem.classList.toggle('drawArea__table__cell--obstacle');
     
     var cellType = this.app.GetCellType(elemId);
@@ -159,7 +170,7 @@ Controller.prototype.ToggleObst = function(elemId){
     if(cellType == this.app.cellType_Start ||    
        cellType == this.app.cellType_Finish){
         viewElem.classList.toggle('drawArea__table__cell--end');
-        document.getElementById('execute__proceed').disabled = true;
+        ById('execute__proceed').disabled = true;
     }
     
 };
@@ -172,20 +183,24 @@ Controller.prototype.SoftRefresh = function(){
 
 Controller.prototype.Refresh = function(){    
     
-    var viewElem;
+    var elem;
     
     // clear CSS class for processed and included in  the route
     for(var i = 1; i <= this.app.GetBoardSize(); i++){
         for(var j = 1; j <= this.app.GetBoardSize(); j++){
-            viewElem = document.getElementById('X' + i + 'Y' + j);
-            viewElem.classList.remove('drawArea__table__cell--route', 
+            elem = ById('X' + i + 'Y' + j);
+            elem.classList.remove('drawArea__table__cell--route', 
                                       'drawArea__table__cell--processed');
-            viewElem.innerHTML = "";
+            elem.innerHTML = "";
         }
     }
     
-    document.getElementById('execute__proceed').classList.remove('execute__button--hidden');
-    document.getElementById('execute__refresh').classList.add('execute__button--hidden');
+    elem = ById('execute__proceed');
+    elem.classList.remove('execute__button--hidden');
+    elem.disabled = false;
+    
+    elem = ById('execute__refresh')
+    elem.classList.add('execute__button--hidden');
     this.app.IsGameEnded = false;
 };
 
@@ -206,7 +221,7 @@ Controller.prototype.SetRandomPlacement = function(){
     this.ToggleEnds(startCellId);
     do{
         var finishCellId = GetCellId(getRandomIntInclusive(1, boardSize),
-                                    getRandomIntInclusive(1, boardSize) );
+                                     getRandomIntInclusive(1, boardSize) );
     }while(startCellId == finishCellId);
     this.ToggleEnds(finishCellId);
     
