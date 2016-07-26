@@ -16,6 +16,11 @@ window.addEventListener('load', function () {
         myObject:ctrl
         }); 
     
+    document.getElementById('generate__button').addEventListener('click', {
+        handleEvent:ctrl.Generate,                  
+        myObject:ctrl
+        }); 
+    
     document.getElementById('execute__proceed').addEventListener('click', {
         handleEvent:ctrl.Proceed,                  
         myObject:ctrl

@@ -26,8 +26,6 @@ Controller.prototype.InitView = function(){
     if (table) 
         drawArea.removeChild(table);
     
-    document.getElementById('execute__proceed').disabled  = true;
-    
 };
 
 Controller.prototype.DrawTable = function(){
@@ -59,18 +57,18 @@ Controller.prototype.DrawTable = function(){
         table.appendChild(tr[i]);
     }
     drawArea.appendChild(table);
+    
+    document.getElementById('execute__proceed').disabled  = true;
+    document.getElementById('generate__button').disabled  = false;
+
 };
 
 Controller.prototype.Proceed = function(){
     
     var _this = this.myObject;
     
-    try{
-        _this.StartGame();
-    }catch(err){
-        _this.ShowMessage(err.message);
-    }    
-
+    _this.StartGame();
+    
 };
 Controller.prototype.StartGame = function(){
     
@@ -106,8 +104,8 @@ Controller.prototype.StartGame = function(){
             viewElem.innerHTML = route[i].currentWeight;
         }
     }else{
-        //GAME OVER!!!
-        throw new Error("The route can't be found!");
+        //no luck, show message;
+        alert("The route can't be found!");
     }
     
 };
@@ -198,4 +196,57 @@ Controller.prototype.ShowMessage = function(message){
     
     //document.getElementById('messageBlock').innerHTML = message;
     alert(message);
-}    
+};    
+
+Controller.prototype.Generate = function(){
+    
+    var _this = this.myObject;
+    if (_this.app)
+    _this.Refresh();
+    _this.SetRandomPlacement();    
+
+};
+
+Controller.prototype.SetRandomPlacement = function(){
+
+    var boardSize = this.app.GetBoardSize();
+    var finishCellId;
+    var currentCellId;
+    
+    var startCellId = GetCellId(getRandomIntInclusive(1, boardSize),
+                                getRandomIntInclusive(1, boardSize) );    
+    this.ToggleEnds(startCellId);
+    do{
+        finishCellId = GetCellId(getRandomIntInclusive(1, boardSize),
+                                    getRandomIntInclusive(1, boardSize) );
+    }while(startCellId == finishCellId);
+    this.ToggleEnds(finishCellId);
+    
+    for (var i = 1; i <= boardSize; i++){
+        for (var j = 1; j <= boardSize; j++){
+            currentCellId = GetCellId(i,j);
+            if (currentCellId == startCellId || currentCellId == finishCellId)
+                continue;
+            // ~50/50 - obstacle or not
+            var selectAsObstacle = Math.round(Math.random());
+            if (selectAsObstacle){
+                this.ToggleObst( GetCellId(i, j) );
+            }
+        }
+    }
+
+};
+
+// Returns a random integer between min (included) and max (included)
+// Using Math.round() will give you a non-uniform distribution!
+function getRandomIntInclusive(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+//returns cell id based on board coordinates
+function GetCellId(x, y){
+    
+    return ("X" + x + "Y" + y);
+    
+};
+

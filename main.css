@@ -1,37 +1,117 @@
 html,
 body {
 	font-family: sans-serif;
+	color: #2D525B;
 }
 
-.boardSize {
-    width: 250px;
+h3{
+	margin-top: 0.2em;
+	margin-bottom: 0.2em;
+}
+
+h4{
+	margin-top: 0.2em;
+	margin-bottom: 0.2em;
+}
+
+.container{
+	width: 450px;
+	text-align: center;
+	background-color: #E8D0A9;
+	border-radius: 5px;
+	box-shadow:1px 1px 2px 2px #C8B099;
+}
+
+.fillOption{
+	display: inline-block;
+	background-color: #ACD1E9;
+	border-radius: 5px;
+	width: 80%;
+	box-shadow:1px 1px 1px 1px #978F83;
+	
+
+}
+
+.boxView{
+	float:left;
+	margin:0 10px 10px 10px;
+}
+.execute{
+	clear:left;
+}
+
+.boardSize{
+	padding-bottom: 0.3em;
 }
 
 .boardSize__create {
+    border-radius:3px;
+	border:1px solid #124d77;
+	cursor:pointer;
+	padding:2px 12px;
+	text-decoration:none;
     color:#ffffff;
 	box-shadow:inset 0px 2px 0px 0px #54a3f7;
-	text-shadow:0px 2px 0px #154682;
+	text-shadow:0px 1px 0px #154682;
+}
+
+.boardSize__create:active {
+	position:relative;
+	top:1px;
 }
 
 .boardSize__create--blue{
 	background-color:#007dc1;
 }
 
+.drawOption__choice{
+	text-align: left;
+}
 
-.drawArea__table{
-	/*border-collapse: separate;*/
-	/*border-spacing: 5px;*/
+.generate__button {
+    border-radius:3px;
+	border:1px solid #124d77;
+	cursor:pointer;
+	padding:2px 12px;
+	text-decoration:none;
+    color:#ffffff;
+	box-shadow:inset 0px 2px 0px 0px #54a3f7;
+	text-shadow:0px 1px 0px #154682;
+}
+
+.generate__button:disabled{
+    background-color:#B7AFA3;
+    box-shadow:inset 0px 2px 0px 0px #979F83;
+	color: #333;
+	text-shadow:0px 1px 0px #999;
+}
+
+.generate__button:active {
+	position:relative;
+	top:1px;
+}
+
+.generate__button--blue{
+	background-color:#007dc1;
+}
+
+/*.generate__button:hover {*/
+/*	background-color:#0061a7;*/
+/*}*/
+
+
+.drawArea{
+	margin-top: 0.5em;
 }
 
 .drawArea__table__cell {
 	background-color: #CCC;
     text-align: center;
     border-radius: 5px;
-    width: 30px;
-    height: 30px;
+    width: 20px;
+    height: 20px;
     padding: 0.5rem;
 } 
-
 
 .drawArea__table__cell:hover {
     background-color: #AAA;
@@ -69,25 +149,16 @@ body {
 	background-color:#52BE80 !important;
 }
 
+.execute{
+	padding: 0.3em 0 0.3em 0;
+}
+
 .execute__button{
-    width: 250px;
     border-radius:3px;
 	border:1px solid #124d77;
-	display:inline-block;
 	cursor:pointer;
-	padding:2px 12px;
 	text-decoration:none;
-}
-
-.execute__button--blue{
-	color:#ffffff;
-	background-color:#007dc1;
-	box-shadow:inset 0px 2px 0px 0px #54a3f7;
-	text-shadow:0px 2px 0px #154682;
-}
-
-.execute__button:hover {
-	background-color:#0061a7;
+	width: 50%;
 }
 
 .execute__button:active {
@@ -96,11 +167,26 @@ body {
 }
 
 .execute__button:disabled{
-    background-color:#CCC;
-    box-shadow:inset 0px 2px 0px 0px #777;
+    background-color:#B7AFA3;
+    box-shadow:inset 0px 2px 0px 0px #979F83;
 	color: #333;
 	text-shadow:0px 1px 0px #999;
-	border:1px solid #333333;
+	/*border:1px solid #333333;*/
+}
+
+.execute__button--blue{
+	color:#ffffff;
+	background-color:#007dc1;
+	box-shadow:inset 0px 2px 0px 0px #54a3f7;
+	text-shadow:0px 1px 0px #154682;
+}
+
+.execute__button--green{
+	color:#ffffff;
+	background-color: #41924B;
+	/*#87E293;*/
+	box-shadow:inset 0px 2px 0px 0px #67C273;
+	text-shadow:0px 1px 0px #154682;
 }
 
 .execute__button--hidden{

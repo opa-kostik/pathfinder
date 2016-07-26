@@ -5,46 +5,66 @@
         <link rel="stylesheet" href="main.css">
     </head>
     <body>
-        <div class="boardSize">
-            <label  class="boardSize__label" 
-                for="boardSize">Enter board size </label>
-            <input  class="boardSize__value" 
-                id="boardSize" type="number" min="2" max="100" />
-            <button class="boardSize__create boardSize__create--blue" 
-                id="boardSize__create">CREATE</button>
+        <div class="container">
+            <div class="boardSize">
+                <h3>1. ENTER BOARD SIZE</h3>
+                <input  class="boardSize__value" 
+                    id="boardSize" type="number" min="2" max="100" />
+                <button class="boardSize__create boardSize__create--blue" 
+                    id="boardSize__create">CREATE</button>
+            </div>
+            
+            
+            <div class='fillOption'>    
+                <h3>2. CHOOSE HOW TO FILL THE BOARD</h3>
+                <div class="drawOption boxView">    
+                    <h4>MANUALLY</h4>
+                    <div class="drawOption__choice">
+                        <input class="drawOption__end" 
+                            id="drawOption__end" type="radio" 
+                            name="action" checked="checked">
+                        <label class="drawOption__end__label" 
+                            for="drawOption__end">SELECT ENDS</label>
+                    </div>
+                    <div>
+                        <input class="drawOption__obstacle" 
+                            id="drawOption__obstacle" type="radio" name="action">
+                        <label class="drawOption__obstacle__label" 
+                            for="drawOption__obstacle">SELECT OBSTACLES</label>
+                    </div>    
+                </div>    
+                
+                <div class="generate boxView">    
+                    <h4>RANDOMLY</h4>
+                    <button class="generate__button 
+                                   generate__button--blue" 
+                        id="generate__button" disabled="true"    
+                        type="button">DO IT</button>
+                </div>
+            </div>
+            
+            
+            <div class="execute">    
+                <h3>3. EXECUTE</h3>
+                <button class="execute__button 
+                               execute__button--green" 
+                    id="execute__proceed" disabled="true"  
+                    type="button">GO!</button>
+                <button class="execute__button 
+                               execute__button--blue  
+                               execute__button--hidden" 
+                    id="execute__refresh" disabled="false" 
+                    type="button">REFRESH</button>
+            </div>
         </div>
-        <br>
-        <div class="drawOption">    
-            <input class="drawOption__end" 
-                id="drawOption__end" type="radio" 
-                name="action" checked="checked">
-            <label class="drawOption__end__label" 
-                for="drawOption__end">Mark start/end</label>
-            <input class="drawOption__obstacle" 
-                id="drawOption__obstacle" type="radio" name="action">
-            <label class="drawOption__obstacle__label" 
-                for="drawOption__obstacle">Draw obstacles</label>
-        </div>    
-        <br>
-        <div class="execute">    
-            <button class="execute__button 
-                           execute__button--blue" 
-                id="execute__proceed" disabled="true"  
-                type="button">FIND ROUTE</button>
-            <button class="execute__button 
-                           execute__button--blue  
-                           execute__button--hidden" 
-                id="execute__refresh" disabled="false" 
-                type="button">REFRESH</button>
-        </div>
-        <div id="messageBlock"></div>
-        <br>
+        
         <div class="drawArea" id="drawArea"></div>
-
+        
         <script type="text/javascript" src="cell.js"></script>
         <script type="text/javascript" src="pathfinder.js"></script>
         <script type="text/javascript" src="app.js"></script>
         <script type="text/javascript" src="controller.js"></script>
+        <script type="text/javascript" src="helper.js"></script>
         <script type="text/javascript" src="script.js"></script>
         
     </body>
