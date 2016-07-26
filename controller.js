@@ -10,7 +10,7 @@ Controller.prototype.CreateTable = function(){
         _this.InitView();    
         _this.DrawTable();
     }catch(err){
-        _this.ShowMessage(err);
+        alert(err);
     }    
     
 };
@@ -188,12 +188,6 @@ Controller.prototype.Refresh = function(){
     document.getElementById('execute__refresh').classList.add('execute__button--hidden');
     this.app.IsGameEnded = false;
 };
-
-Controller.prototype.ShowMessage = function(message){
-    
-    //document.getElementById('messageBlock').innerHTML = message;
-    alert(message);
-};    
 
 Controller.prototype.Generate = function(){
     
