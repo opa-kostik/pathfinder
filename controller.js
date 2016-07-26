@@ -19,10 +19,10 @@ Controller.prototype.InitView = function(){
     
     var size = Number(document.getElementById('boardSize').value);
     var drawArea = document.getElementById('drawArea');
-    var table = document.getElementById('drawArea__table');
-    
+
     this.app = new App(size);
     
+    var table = document.getElementById('drawArea__table');
     if (table) 
         drawArea.removeChild(table);
     
@@ -30,15 +30,13 @@ Controller.prototype.InitView = function(){
 
 Controller.prototype.DrawTable = function(){
     
-    var tr = [];
-    var td = [];
-    var self = this;
     
-    var drawArea = document.getElementById('drawArea');
     var table    = document.createElement('table');
     table.setAttribute('id','drawArea__table' );
     table.classList.add('drawArea__table');
     
+    var tr = [];
+    var td = [];
     for (var i = 0; i < this.app.GetBoardSize(); i++){
         tr[i] = document.createElement('tr');   
         tr[i].classList.add('drawArea__table__row');
@@ -47,6 +45,8 @@ Controller.prototype.DrawTable = function(){
             td[j] = document.createElement('td');   
             td[j].setAttribute('id','X'+ ( i + 1 ) + 'Y' + ( j + 1 ) );
             td[j].classList.add('drawArea__table__cell');
+            
+            var self = this;
             td[j].addEventListener('click', function(event){
                 var viewElemId = event.srcElement.id;
                 //set event when the cell is pressed
@@ -56,6 +56,7 @@ Controller.prototype.DrawTable = function(){
         }
         table.appendChild(tr[i]);
     }
+    var drawArea = document.getElementById('drawArea');
     drawArea.appendChild(table);
     
     document.getElementById('execute__proceed').disabled  = true;
@@ -72,11 +73,7 @@ Controller.prototype.Proceed = function(){
 };
 Controller.prototype.StartGame = function(){
     
-    var currentCell     = {};
-    var route           = [];
-    var viewElem        = {};
-    
-    currentCell = this.app.SetupGame();
+    var currentCell = this.app.SetupGame();
     do{
         currentCell = this.app.ProcessCell(currentCell);
         if(currentCell){    
@@ -93,8 +90,11 @@ Controller.prototype.StartGame = function(){
     document.getElementById("execute__refresh").classList.remove('execute__button--hidden');
     document.getElementById("execute__refresh").disabled = false;
     
+    
     if (this.app.Game.isFinishReached){
-        route = this.app.GetRoute();
+        var viewElem        = {};
+        var route = this.app.GetRoute();
+    
         for(var i = 0; i < route.length; i++){
             viewElem = document.getElementById('X' + route[i].xPos + 'Y' + route[i].yPos);
             if(route[i].remainingWeight != 0){
@@ -130,13 +130,11 @@ Controller.prototype.ToggleCell = function(elemId) {
 
 Controller.prototype.ToggleEnds = function(elemId){
 
-    var cellType;
-    var viewElem; 
-    var viewElemOld;
-    viewElem = document.getElementById(elemId);
+    var viewElem = document.getElementById(elemId);
     viewElem.classList.toggle('drawArea__table__cell--end');
-    cellType = this.app.GetCellType(elemId);
-    viewElemOld = this.app.UpdateEnd(elemId);
+    
+    var cellType = this.app.GetCellType(elemId);
+    var viewElemOld = this.app.UpdateEnd(elemId);
     
     //if Obstacle cell was toggled -> update css modificator
     if (cellType == this.app.cellType_Obstacle)
@@ -153,11 +151,10 @@ Controller.prototype.ToggleEnds = function(elemId){
 
 Controller.prototype.ToggleObst = function(elemId){
 
-    var cellType;
     var viewElem = document.getElementById(elemId);
     viewElem.classList.toggle('drawArea__table__cell--obstacle');
     
-    cellType = this.app.GetCellType(elemId);
+    var cellType = this.app.GetCellType(elemId);
     this.app.UpdateObst(elemId);
     if(cellType == this.app.cellType_Start ||    
        cellType == this.app.cellType_Finish){
@@ -201,7 +198,7 @@ Controller.prototype.ShowMessage = function(message){
 Controller.prototype.Generate = function(){
     
     var _this = this.myObject;
-    if (_this.app)
+    
     _this.Refresh();
     _this.SetRandomPlacement();    
 
@@ -210,21 +207,18 @@ Controller.prototype.Generate = function(){
 Controller.prototype.SetRandomPlacement = function(){
 
     var boardSize = this.app.GetBoardSize();
-    var finishCellId;
-    var currentCellId;
-    
     var startCellId = GetCellId(getRandomIntInclusive(1, boardSize),
                                 getRandomIntInclusive(1, boardSize) );    
     this.ToggleEnds(startCellId);
     do{
-        finishCellId = GetCellId(getRandomIntInclusive(1, boardSize),
+        var finishCellId = GetCellId(getRandomIntInclusive(1, boardSize),
                                     getRandomIntInclusive(1, boardSize) );
     }while(startCellId == finishCellId);
     this.ToggleEnds(finishCellId);
     
     for (var i = 1; i <= boardSize; i++){
         for (var j = 1; j <= boardSize; j++){
-            currentCellId = GetCellId(i,j);
+            var currentCellId = GetCellId(i,j);
             if (currentCellId == startCellId || currentCellId == finishCellId)
                 continue;
             // ~50/50 - obstacle or not

@@ -37,8 +37,6 @@ App.prototype.GetCellType = function(cellId){
 
 App.prototype.UpdateEnd = function(cellId){
 
-    var index;
-    var cellIdOld;
     var cellType = this.GetCellType(cellId);
     
     switch(cellType){
@@ -55,7 +53,7 @@ App.prototype.UpdateEnd = function(cellId){
         default:
             if (cellType == this.cellType_Obstacle){
                 // Delete
-                index = this.viewBarriers.indexOf(cellId);
+                var index = this.viewBarriers.indexOf(cellId);
                 this.viewBarriers.splice(index,1);
             }    
             //either Start or Finish cell 've been selected so far
@@ -65,7 +63,7 @@ App.prototype.UpdateEnd = function(cellId){
                 this.viewFinishId = cellId;
             else{    
                 //take the Start cell as a substitute
-                cellIdOld = this.viewStartId;
+                var cellIdOld = this.viewStartId;
                 this.viewStartId = this.viewFinishId;
                 this.viewFinishId = cellId;    
             }
@@ -131,11 +129,11 @@ App.prototype.GetBoardSize = function(){
 //Game preparation
 App.prototype.SetupGame = function(){
 
-    var obstacles       = [];
     var startPoint  = new Cell(this.getX(this.viewStartId) , this.getY(this.viewStartId) , 0);
     var finishPoint = new Cell(this.getX(this.viewFinishId), this.getY(this.viewFinishId));
     
     //collect info about Obstacles on a board
+    var obstacles       = [];
     for(var i = 0; i < this.viewBarriers.length; i++){ 
         obstacles.push([this.getX(this.viewBarriers[i]), this.getY(this.viewBarriers[i])]);  
     }
@@ -148,16 +146,8 @@ App.prototype.SetupGame = function(){
 
 App.prototype.ProcessCell = function(candidate){
     
-    var nextCandidate   = {};
-    var neighbourCell   = {};
-    
-    //Select a candidate with a least 'Total weight' 
-    //which is (CurrentWeight + RemainingWeight)
-    //Considering the list of candidates is sorted by the 
-    //'Total weight' - we pick the 1st one    
-        
     //below
-    neighbourCell = this.Game.getNeighbour(candidate, 1, 0);
+    var neighbourCell = this.Game.getNeighbour(candidate, 1, 0);
     if (neighbourCell){
         this.Game.addCandidate(neighbourCell);
         if (this.Game.isFinishReached) return;
@@ -187,7 +177,7 @@ App.prototype.ProcessCell = function(candidate){
     //mark current as processed
     this.Game.processed.push(candidate);
     //select new candidate
-    nextCandidate = this.Game.candidates.shift();
+    var nextCandidate = this.Game.candidates.shift();
     
     return nextCandidate;
 };    
@@ -195,8 +185,6 @@ App.prototype.ProcessCell = function(candidate){
 App.prototype.GetRoute = function(){ 
     
     var resultRoute = [];
-    
-    //WIN!!!
     var curCell = this.Game.finishPoint;
     while(curCell.xPos != this.Game.startPoint.xPos || curCell.yPos != this.Game.startPoint.yPos){
         //draw a route

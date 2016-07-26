@@ -20,7 +20,6 @@ Pathfinder.prototype.getNeighbour = function(currentCell, xOffset, yOffset){
     //newighbour coordinates
     var xPosNew = currentCell.xPos + xOffset;
     var yPosNew = currentCell.yPos + yOffset;
-    var i = 0;
     
     //check if the neighbour is out of bounds
     if ( xPosNew > this.boardSize || 
@@ -32,7 +31,7 @@ Pathfinder.prototype.getNeighbour = function(currentCell, xOffset, yOffset){
     }
     
     //check whether we hit the wall
-    for(i = 0; i < this.obstacles.length; i++){
+    for(var i = 0; i < this.obstacles.length; i++){
         if ( this.obstacles[i][0] == xPosNew &&
              this.obstacles[i][1] == yPosNew )
             //do not proceed
@@ -56,9 +55,8 @@ Pathfinder.prototype.getNeighbour = function(currentCell, xOffset, yOffset){
 Pathfinder.prototype.addCandidate = function(currentCell){ 
 
     //check if we already have a better option with this candidate
-    var i = 0;
     var ind = -1;
-    for( i = 0; i < this.candidates.length; i++){ 
+    for(var i = 0; i < this.candidates.length; i++){ 
         if (this.candidates[i].xPos == currentCell.xPos && 
             this.candidates[i].yPos == currentCell.yPos) 
             ind = i;
