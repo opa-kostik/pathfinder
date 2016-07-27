@@ -4,7 +4,7 @@ Simple game which allows you to find routes between two designated points bypass
 # Description
 Create a program that solves a task of finding a route using А* algorithm
 
-*italic Technology restrictions: task has to be implemented using **HTML**, **CSS** and **JavaScript**(plain, without any frameworks )*
+_Technology restrictions: task has to be implemented using **HTML**, **CSS** and **JavaScript**(plain, without any frameworks )_
 
 Expected functionality:
 
@@ -21,5 +21,5 @@ Here is an example of a resulting Board(ends – orange cells, obstacles - black
 ![Board](Board.png)
 
 
-*italic Updated*: 
+_Updated_: 
     * Added possibility to randomly generate positions of ends and obstacles in addition to manual selection 
