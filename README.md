@@ -22,4 +22,4 @@ Here is an example of a resulting Board(ends – orange cells, obstacles - black
 
 
 _Updated_: 
-    * Added possibility to randomly generate positions of ends and obstacles in addition to manual selection 
+* Added possibility to randomly generate positions of ends and obstacles in addition to manual selection 
