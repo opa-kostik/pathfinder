@@ -11,24 +11,24 @@ window.addEventListener('load', function () {
         return event.charCode >= 48 && event.charCode <= 57;
     });
     
-    ById('boardSize__create').addEventListener('click', {
-        handleEvent:ctrl.CreateTable,                  
-        myObject:ctrl
-        }); 
+    ById('boardSize__create').addEventListener('click', 
+        function(){ 
+            ctrl.CreateTable();
+    }); 
     
-    ById('generate__button').addEventListener('click', {
-        handleEvent:ctrl.Generate,                  
-        myObject:ctrl
-        }); 
+    ById('generate__button').addEventListener('click', 
+        function(){ 
+            ctrl.Generate();
+    }); 
     
-    ById('execute__proceed').addEventListener('click', {
-        handleEvent:ctrl.Proceed,                  
-        myObject:ctrl
-        });
-    ById('execute__refresh').addEventListener('click', {
-        handleEvent:ctrl.SoftRefresh,                  
-        myObject:ctrl
-        });
+    ById('execute__proceed').addEventListener('click', 
+        function(){ 
+            ctrl.StartGame();
+    });
+    ById('execute__refresh').addEventListener('click', 
+        function(){ 
+            ctrl.Refresh();
+    });
     //disable drag and drop features to avoid hovering effects
     ById('drawArea').addEventListener('dragstart', function(event){
         event.preventDefault(); 

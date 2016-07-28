@@ -5,10 +5,10 @@ function Controller(){
 
 Controller.prototype.CreateTable = function(){
     
-    var _this = this.myObject;
+    // var _this = this.myObject;
     try{
-        _this.InitView();    
-        _this.DrawTable();
+        this.InitView();    
+        this.DrawTable();
     }catch(err){
         alert(err);
     }    
@@ -71,13 +71,6 @@ Controller.prototype.DrawTable = function(){
 
 };
 
-Controller.prototype.Proceed = function(){
-    
-    var _this = this.myObject;
-    
-    _this.StartGame();
-    
-};
 Controller.prototype.StartGame = function(){
     
     var currentCell = this.app.SetupGame();
@@ -175,12 +168,6 @@ Controller.prototype.ToggleObst = function(elemId){
     
 };
 
-Controller.prototype.SoftRefresh = function(){
-    
-    this.myObject.Refresh();
-    
-};
-
 Controller.prototype.Refresh = function(){    
     
     var elem;
@@ -206,10 +193,10 @@ Controller.prototype.Refresh = function(){
 
 Controller.prototype.Generate = function(){
     
-    var _this = this.myObject;
+    // var _this = this.myObject;
     
-    _this.Refresh();
-    _this.SetRandomPlacement();    
+    this.Refresh();
+    this.SetRandomPlacement();    
 
 };
 
